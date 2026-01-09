@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reborn核心词汇速查</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #F1ECEO;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(to right, #117C0D 0%, #2B9E25 100%);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(17, 124, 13, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .instructions {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #117C0D;
+        }
+        
+        .instructions h2 {
+            color: #117C0D;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            height: 420px;
+            perspective: 1000px;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 25px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-front {
+            background-color: white;
+            color: #333;
+        }
+        
+        .card-back {
+            background: linear-gradient(to bottom right, #117C0D, #2B9E25);
+            color: white;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+        }
+        
+        .card-number {
+            display: inline-block;
+            background: linear-gradient(to right, #117C0D, #2B9E25);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            line-height: 36px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .question {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            flex-grow: 1;
+            text-align: left;
+        }
+        
+        .blank {
+            display: inline-block;
+            width: 180px;
+            height: 40px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            border: 2px dashed #117C0D;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .option {
+            background-color: #f5f7fa;
+            border: 2px solid #c3cfe2;
+            border-radius: 10px;
+            padding: 12px 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .option:hover {
+            background-color: #e1e8f7;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option.selected {
+            background-color: #FAC75E;
+            color: #333;
+            border-color: #FAC75E;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(250, 199, 94, 0.3);
+        }
+        
+        .option.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .check-btn {
+            background: linear-gradient(to right, #117C0D, #2B9E25);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(17, 124, 13, 0.3);
+        }
+        
+        .check-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(17, 124, 13, 0.4);
+        }
+        
+        .check-btn:active {
+            transform: translateY(0);
+        }
+        
+        .check-btn:disabled {
+            background: linear-gradient(to right, #cccccc, #aaaaaa);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .card-back h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .answer {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .answer .correct {
+            color: #117C0D;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .answer .user-choice {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .answer .result {
+            font-weight: bold;
+        }
+        
+        .explanation {
+            text-align: left;
+            line-height: 1.6;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .wrong-explanation {
+            text-align: left;
+            line-height: 1.6;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #FAC75E;
+        }
+        
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            flex-grow: 1;
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #117C0D, #2B9E25);
+            border-radius: 6px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-weight: bold;
+            align-items: center;
+        }
+        
+        .stat-item {
+            padding: 8px 15px;
+            border-radius: 8px;
+            background-color: #f5f7fa;
+        }
+        
+        .correct-stat {
+            color: #117C0D;
+        }
+        
+        .total-stat {
+            color: #117C0D;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(to right, #FAC75E, #FFB347);
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(250, 199, 94, 0.3);
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(250, 199, 94, 0.4);
+        }
+        
+        .restart-info {
+            padding: 8px 15px;
+            border-radius: 8px;
+            background-color: #f5f7fa;
+            color: #117C0D;
+            font-weight: bold;
+        }
+        
+        .restart-warning {
+            padding: 8px 15px;
+            border-radius: 8px;
+            background-color: #FFEAA7;
+            color: #E17055;
+            font-weight: bold;
+            border: 2px solid #FDCB6E;
+        }
+        
+        @media (max-width: 1100px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .card {
+                height: 450px;
+            }
+            
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .progress-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .progress-bar {
+                width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Reborn核心词汇速查</h1>
+            <div class="subtitle">交互式单词填空练习 - 适合A2-B1水平</div>
+        </header>
+        
+        <div class="instructions">
+            <h2><i class="fas fa-info-circle"></i> 使用说明</h2>
+            <ul>
+                <li>从每个题目的4个选项中选择最合适的单词填入句子空白处</li>
+                <li>点击"检查答案"按钮查看正确答案和中文解析</li>
+                <li>再次点击"检查答案"按钮可返回题目页重新选择</li>
+                <li>完成所有题目后，可使用"重新开始"按钮重置测试</li>
+                <li>每答对一题，进度条会增加，右上角会显示答题统计</li>
+            </ul>
+            <p><strong>提示：</strong> 正确答案不一定是单词表中列出的单词，请根据句意选择最合适的选项。</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="stat-item total-stat">
+                <i class="fas fa-list-ol"></i> 题目: <span id="current-question">0</span>/<span id="total-questions">15</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="stats">
+                <div class="stat-item correct-stat">
+                    <i class="fas fa-check-circle"></i> 正确: <span id="correct-count">0</span>
+                </div>
+                <div id="restart-info" class="restart-info">第1次答题</div>
+                <button class="restart-btn" id="restart-btn">
+                    <i class="fas fa-redo"></i> 重新开始
+                </button>
+            </div>
+        </div>
+        
+        <div class="cards-container" id="cards-container">
+            <!-- 卡片将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        // 基于提供的词汇列表创建题目数据
+        const questions = [
+            {
+                id: 1,
+                sentence: "During the economic ________, many people lost their jobs and homes.",
+                correctAnswer: "crisis",
+                options: ["adversity", "crisis", "poverty", "depression"],
+                explanation: "这句话的意思是：在经济危机期间，许多人失去了工作和家园。'crisis' 表示'危机'，特指经济危机。"
+            },
+            {
+                id: 2,
+                sentence: "The police found strong ________ that linked him to the crime scene.",
+                correctAnswer: "evidence",
+                options: ["documentation", "trace", "evidence", "association"],
+                explanation: "这句话的意思是：警方发现了将他与犯罪现场联系起来的强有力证据。'evidence' 表示'证据'，符合句意。"
+            },
+            {
+                id: 3,
+                sentence: "Many animals are losing their natural ________ due to deforestation.",
+                correctAnswer: "habitat",
+                options: ["domain", "habitat", "landscape", "estate"],
+                explanation: "这句话的意思是：由于森林砍伐，许多动物正在失去它们的自然栖息地。'habitat' 表示'栖息地'，符合句意。"
+            },
+            {
+                id: 4,
+                sentence: "The new medicine showed a significant ________ in pain for most patients.",
+                correctAnswer: "reduction",
+                options: ["sufficiency", "impact", "reduction", "application"],
+                explanation: "这句话的意思是：新药对大多数患者的疼痛显示出显著的减少。'reduction' 表示'减少'，符合句意。"
+            },
+            {
+                id: 5,
+                sentence: "The ________ of this container is 2 liters, which is enough for our needs.",
+                correctAnswer: "capacity",
+                options: ["volume", "altitude", "capacity", "quantity"],
+                explanation: "这句话的意思是：这个容器的容量是2升，足够我们的需求。'capacity' 表示'容量'，符合句意。"
+            },
+            {
+                id: 6,
+                sentence: "After the earthquake, international organizations provided ________ to the affected areas.",
+                correctAnswer: "aid",
+                options: ["burden", "aid", "commitment", "interference"],
+                explanation: "这句话的意思是：地震后，国际组织向受影响地区提供了援助。'aid' 表示'援助'，符合句意。"
+            },
+            {
+                id: 7,
+                sentence: "The ________ between smoking and lung cancer is well established.",
+                correctAnswer: "correlation",
+                options: ["conflict", "correlation", "interaction", "association"],
+                explanation: "这句话的意思是：吸烟与肺癌之间的关联已得到充分证实。'correlation' 表示'关联，相关性'，符合句意。"
+            },
+            {
+                id: 8,
+                sentence: "His negative ________ towards work made it difficult for him to keep a job.",
+                correctAnswer: "attitude",
+                options: ["objective", "norm", "attitude", "obligation"],
+                explanation: "这句话的意思是：他对工作的消极态度使他很难保住工作。'attitude' 表示'态度'，符合句意。"
+            },
+            {
+                id: 9,
+                sentence: "The doctor explained the common ________ of the flu, such as fever and cough.",
+                correctAnswer: "symptoms",
+                options: ["fragments", "symptoms", "mechanisms", "therapies"],
+                explanation: "这句话的意思是：医生解释了流感的常见症状，如发烧和咳嗽。'symptoms' 表示'症状'，符合句意。"
+            },
+            {
+                id: 10,
+                sentence: "The company faces a serious ________ because of the computer system failure.",
+                correctAnswer: "malfunction",
+                options: ["crisis", "adversity", "malfunction", "famine"],
+                explanation: "这句话的意思是：由于计算机系统故障，公司面临严重的故障问题。'malfunction' 表示'故障'，符合句意。"
+            },
+            {
+                id: 11,
+                sentence: "Regular exercise is important for maintaining physical and mental ________.",
+                correctAnswer: "wellbeing",
+                options: ["fitness", "health", "strength", "wellbeing"],
+                explanation: "这句话的意思是：定期锻炼对于保持身心健康很重要。'wellbeing' 表示'健康，福祉'，符合句意。"
+            },
+            {
+                id: 12,
+                sentence: "The scientist proposed a new ________ to explain the experimental results.",
+                correctAnswer: "hypothesis",
+                options: ["theory", "explanation", "prediction", "hypothesis"],
+                explanation: "这句话的意思是：科学家提出了一个新的假设来解释实验结果。'hypothesis' 表示'假设'，符合句意。"
+            },
+            {
+                id: 13,
+                sentence: "The long ________ has caused severe water shortages in the region.",
+                correctAnswer: "drought",
+                options: ["famine", "calamity", "crisis", "drought"],
+                explanation: "这句话的意思是：长期的干旱导致该地区严重缺水。'drought' 表示'干旱'，符合句意。"
+            },
+            {
+                id: 14,
+                sentence: "The government imposed new regulations to reduce environmental ________.",
+                correctAnswer: "pollution",
+                options: ["impact", "burden", "tension", "pollution"],
+                explanation: "这句话的意思是：政府实施了新规定以减少环境污染。'pollution' 表示'污染'，虽然不在单词表中，但根据句意是最合适的选项。"
+            },
+            {
+                id: 15,
+                sentence: "The ________ of the mountain is over 5,000 meters above sea level.",
+                correctAnswer: "altitude",
+                options: ["height", "peak", "summit", "altitude"],
+                explanation: "这句话的意思是：这座山的高度超过海拔5,000米。'altitude' 表示'高度，海拔'，符合句意。"
+            }
+        ];
+
+        // 单词解析数据
+        const wordExplanations = {
+            "crisis": "危机，危急关头",
+            "evidence": "证据，证明",
+            "habitat": "栖息地，生长环境",
+            "reduction": "减少，降低",
+            "capacity": "容量，能力",
+            "aid": "援助，帮助",
+            "correlation": "关联，相互关系",
+            "attitude": "态度，看法",
+            "symptoms": "症状，征兆",
+            "malfunction": "故障，失灵",
+            "wellbeing": "健康，福祉",
+            "hypothesis": "假设，假说",
+            "drought": "干旱，旱灾",
+            "pollution": "污染",
+            "altitude": "高度，海拔",
+            "adversity": "逆境，不幸",
+            "poverty": "贫穷，贫困",
+            "depression": "抑郁，沮丧",
+            "documentation": "文件，证明文件",
+            "trace": "痕迹，踪迹",
+            "association": "协会，关联",
+            "domain": "领域，范围",
+            "landscape": "景观，风景",
+            "estate": "房地产，财产",
+            "sufficiency": "充足，足够",
+            "impact": "影响，冲击",
+            "application": "应用，申请",
+            "volume": "体积，容量",
+            "quantity": "数量，量",
+            "burden": "负担，重担",
+            "commitment": "承诺，投入",
+            "interference": "干涉，干预",
+            "conflict": "冲突，矛盾",
+            "interaction": "互动，相互作用",
+            "objective": "目标，目的",
+            "norm": "规范，标准",
+            "obligation": "义务，责任",
+            "fragments": "碎片，片段",
+            "mechanisms": "机制，机械装置",
+            "therapies": "治疗，疗法",
+            "famine": "饥荒，饥饿",
+            "calamity": "灾难，灾祸",
+            "height": "高度，身高",
+            "peak": "顶峰，高峰",
+            "summit": "顶峰，顶点"
+        };
+
+        // 初始化变量
+        let userAnswers = new Array(questions.length).fill(null);
+        let correctCount = 0;
+        let restartCount = 0;
+        let answerSubmitted = new Array(questions.length).fill(false);
+        let tempSelections = new Array(questions.length).fill(null); // 临时存储选择
+
+        // DOM元素
+        const cardsContainer = document.getElementById('cards-container');
+        const progressFill = document.getElementById('progress-fill');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const correctCountSpan = document.getElementById('correct-count');
+        const restartBtn = document.getElementById('restart-btn');
+        const restartInfo = document.getElementById('restart-info');
+
+        // 初始化显示
+        totalQuestionsSpan.textContent = questions.length;
+        restartInfo.textContent = "第1次答题";
+        
+        // 生成卡片
+        function generateCards() {
+            cardsContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = `card-${question.id}`;
+                
+                const isAnswered = answerSubmitted[index];
+                const userAnswer = userAnswers[index];
+                const isCorrect = isAnswered && userAnswer === question.correctAnswer;
+                const tempSelection = tempSelections[index];
+                
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-number">${question.id}</div>
+                            <div class="question">
+                                ${question.sentence.replace('________', '<div class="blank"></div>')}
+                            </div>
+                            <div class="options-container">
+                                ${question.options.map(option => `
+                                    <div class="option ${tempSelection === option ? 'selected' : ''} ${isAnswered ? 'disabled' : ''}" data-option="${option}">${option}</div>
+                                `).join('')}
+                            </div>
+                            <button class="check-btn" data-id="${question.id}" ${!tempSelection ? 'disabled' : ''}>
+                                <i class="fas fa-check-circle"></i> ${isAnswered ? '查看答案' : '检查答案'}
+                            </button>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-number">${question.id}</div>
+                            <h3>答案与解析</h3>
+                            <div class="answer">
+                                <div class="correct">正确答案: ${question.correctAnswer}</div>
+                                <div class="user-choice">你的选择: ${userAnswer ? userAnswer : '未选择'}</div>
+                                <div class="result">${isAnswered ? (isCorrect ? '<span style="color:#117C0D">✓ 回答正确</span>' : '<span style="color:#E74C3C">✗ 回答错误</span>') : ''}</div>
+                            </div>
+                            <div class="explanation">
+                                <strong>解析:</strong> ${question.explanation}
+                            </div>
+                            ${userAnswer && userAnswer !== question.correctAnswer && wordExplanations[userAnswer] ? 
+                                `<div class="wrong-explanation">
+                                    <strong>你选择的"${userAnswer}"意思是:</strong> ${wordExplanations[userAnswer]}
+                                </div>` : ''
+                            }
+                            <button class="check-btn back-btn" data-id="${question.id}">
+                                <i class="fas fa-undo"></i> 返回题目
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                cardsContainer.appendChild(card);
+                
+                // 添加选项点击事件
+                const optionElements = card.querySelectorAll('.option');
+                const checkBtn = card.querySelector('.check-btn:not(.back-btn)');
+                
+                optionElements.forEach(option => {
+                    option.addEventListener('click', () => {
+                        if (!isAnswered) {
+                            // 取消同一卡片中其他选项的选中状态
+                            optionElements.forEach(opt => opt.classList.remove('selected'));
+                            // 选中当前选项
+                            option.classList.add('selected');
+                            tempSelections[index] = option.dataset.option;
+                            
+                            // 启用检查答案按钮
+                            checkBtn.disabled = false;
+                        }
+                    });
+                });
+                
+                // 添加检查答案按钮点击事件
+                checkBtn.addEventListener('click', () => {
+                    if (!isAnswered && tempSelections[index]) {
+                        // 提交答案
+                        userAnswers[index] = tempSelections[index];
+                        answerSubmitted[index] = true;
+                        
+                        // 检查是否正确
+                        if (userAnswers[index] === question.correctAnswer) {
+                            correctCount++;
+                            correctCountSpan.textContent = correctCount;
+                        }
+                        
+                        updateProgress();
+                        
+                        // 刷新卡片以更新显示
+                        refreshCard(index);
+                    }
+                    
+                    // 翻转卡片显示答案
+                    card.classList.add('flipped');
+                });
+                
+                // 添加返回题目按钮事件
+                const backBtn = card.querySelector('.back-btn');
+                if (backBtn) {
+                    backBtn.addEventListener('click', () => {
+                        card.classList.remove('flipped');
+                    });
+                }
+            });
+            
+            updateProgress();
+        }
+
+        // 刷新单个卡片
+        function refreshCard(index) {
+            const card = document.getElementById(`card-${questions[index].id}`);
+            if (!card) return;
+            
+            const question = questions[index];
+            const isAnswered = answerSubmitted[index];
+            const userAnswer = userAnswers[index];
+            const isCorrect = isAnswered && userAnswer === question.correctAnswer;
+            const tempSelection = tempSelections[index];
+            
+            // 更新卡片内容
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-number">${question.id}</div>
+                        <div class="question">
+                            ${question.sentence.replace('________', '<div class="blank"></div>')}
+                        </div>
+                        <div class="options-container">
+                            ${question.options.map(option => `
+                                <div class="option ${tempSelection === option ? 'selected' : ''} ${isAnswered ? 'disabled' : ''}" data-option="${option}">${option}</div>
+                            `).join('')}
+                        </div>
+                        <button class="check-btn" data-id="${question.id}" ${!tempSelection ? 'disabled' : ''}>
+                            <i class="fas fa-check-circle"></i> ${isAnswered ? '查看答案' : '检查答案'}
+                        </button>
+                    </div>
+                    <div class="card-back">
+                        <div class="card-number">${question.id}</div>
+                        <h3>答案与解析</h3>
+                        <div class="answer">
+                            <div class="correct">正确答案: ${question.correctAnswer}</div>
+                            <div class="user-choice">你的选择: ${userAnswer ? userAnswer : '未选择'}</div>
+                            <div class="result">${isAnswered ? (isCorrect ? '<span style="color:#117C0D">✓ 回答正确</span>' : '<span style="color:#E74C3C">✗ 回答错误</span>') : ''}</div>
+                        </div>
+                        <div class="explanation">
+                            <strong>解析:</strong> ${question.explanation}
+                        </div>
+                        ${userAnswer && userAnswer !== question.correctAnswer && wordExplanations[userAnswer] ? 
+                            `<div class="wrong-explanation">
+                                <strong>你选择的"${userAnswer}"意思是:</strong> ${wordExplanations[userAnswer]}
+                            </div>` : ''
+                        }
+                        <button class="check-btn back-btn" data-id="${question.id}">
+                            <i class="fas fa-undo"></i> 返回题目
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // 重新绑定事件
+            const optionElements = card.querySelectorAll('.option');
+            const checkBtn = card.querySelector('.check-btn:not(.back-btn)');
+            const backBtn = card.querySelector('.back-btn');
+            
+            optionElements.forEach(option => {
+                option.addEventListener('click', () => {
+                    if (!answerSubmitted[index]) {
+                        optionElements.forEach(opt => opt.classList.remove('selected'));
+                        option.classList.add('selected');
+                        tempSelections[index] = option.dataset.option;
+                        checkBtn.disabled = false;
+                    }
+                });
+            });
+            
+            checkBtn.addEventListener('click', () => {
+                card.classList.add('flipped');
+            });
+            
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    card.classList.remove('flipped');
+                });
+            }
+        }
+
+        // 更新进度条
+        function updateProgress() {
+            const answeredCount = answerSubmitted.filter(submitted => submitted).length;
+            const progressPercentage = (answeredCount / questions.length) * 100;
+            progressFill.style.width = `${progressPercentage}%`;
+            currentQuestionSpan.textContent = answeredCount;
+        }
+
+        // 重新开始测试
+        function restartTest() {
+            restartCount++;
+            
+            // 检查重启次数
+            if (restartCount >= 5) {
+                restartInfo.innerHTML = '<span style="color:#E17055">你今天重复的次数太多啦，需要再次复习哦！</span>';
+                restartInfo.className = 'restart-warning';
+                return;
+            }
+            
+            userAnswers = new Array(questions.length).fill(null);
+            tempSelections = new Array(questions.length).fill(null);
+            answerSubmitted = new Array(questions.length).fill(false);
+            correctCount = 0;
+            correctCountSpan.textContent = correctCount;
+            generateCards();
+            
+            // 更新重启信息
+            restartInfo.textContent = `第${restartCount + 1}次答题`;
+            restartInfo.className = 'restart-info';
+            
+            // 滚动到顶部
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // 初始化
+        generateCards();
+        
+        // 添加重新开始按钮事件
+        restartBtn.addEventListener('click', restartTest);
+    </script>
+</body>
+</html>
